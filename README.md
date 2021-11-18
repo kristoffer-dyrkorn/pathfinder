@@ -17,7 +17,7 @@ By assuming that both the track and the triangle mesh is 2D, it is possible to f
 # How to use
 
 > `npm install`
->
+> `cd tests`
 > `node tests.js`
 
 See the bottom of `tests.js` for examples on how to use.
