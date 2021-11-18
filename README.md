@@ -4,7 +4,7 @@ Given a 2D polyline and a 2.5D triangular mesh, this tool calculates the resulti
 
 <p align="center">
 
-![](https://github.com/kristoffer-dyrkorn/pathfinder/blob/main/images/pathfinding.png)
+<img src="https://github.com/kristoffer-dyrkorn/pathfinder/blob/main/images/pathfinding.png">
 
 </p>
 # Use case
