@@ -3,10 +3,9 @@
 Given a 2D polyline and a 2.5D triangular mesh, this tool calculates the resulting path when projected onto the mesh surface.
 
 <p align="center">
-
 <img src="https://github.com/kristoffer-dyrkorn/pathfinder/blob/main/images/pathfinding.png">
-
 </p>
+
 # Use case
 
 If you have a GPS track from a hiking trip, and a terrain model of the same area, you might want to render the track and the terrain surface together. However, the GPS track will likely intersect the surface in many places - due to low precision in either GPS measurements, surface modelling, or both.
