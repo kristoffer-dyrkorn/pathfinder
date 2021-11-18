@@ -17,7 +17,7 @@ Assume you have a GPS track from a hiking trip, and a terrain model of the same 
 - Also add all track path points fully inside the mesh triangles
 - For each point in the resulting path, get elevation data by interpolation - either along triangle edges or inside triangles
 
-The result is a 3D track that piecewise intersects the terrain surface. By adding a fixed elevation offset to the track it can then be rendered properly along with the terrain.
+The result is a 3D track that follows the terrain surface precisely. By adding a fixed elevation offset to the track it can then be rendered properly along with the terrain.
 
 # How to use
 
