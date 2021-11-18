@@ -1,6 +1,6 @@
 # pathfinder
 
-Given a 2d polyline (blue) and a triangular mesh surface (black), calculate the resulting path (red) when projecting the polyline onto the surface.
+Given a 2D polyline (blue) and a triangular mesh surface (black), calculate the resulting path (red) when projecting the polyline onto the surface.
 
 <p align="center">
 <img src="https://github.com/kristoffer-dyrkorn/pathfinder/blob/main/images/pathfinding.png">
@@ -10,7 +10,9 @@ Given a 2d polyline (blue) and a triangular mesh surface (black), calculate the 
 
 Assume you have a GPS track from a hiking trip, and a terrain model of the same area. You want to render the track and the terrain surface. However, since the terrain model has limited resolution, and the GPS is not always precise, the recorded track will not follow the terrain surface. Sometimes it will lie above the surface, sometimes it will disappear underneath it.
 
-By assuming the track is a 2D track, and by calculating the intersection points between the track and the mesh triangles, the result is a 3D track that piecewise follows the terrain surface exactly. By adding a fixed elevation offset to the track it can then be rendered properly along with the terrain.
+# Method
+
+By assuming that both the track and the triangle mesh is 2D, it is possible to find all intersection points between the track and the triangles. Then, for each intersection point it is possible to calculate an elevation (either by interpolating along triangle edges or fully inside triangles). The result is a 3D track that piecewise follows the terrain surface exactly. By adding a fixed elevation offset to the track it can then be rendered properly along with the terrain.
 
 # How to use
 
