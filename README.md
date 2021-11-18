@@ -2,7 +2,7 @@
 
 Given a 2D polyline and a 2.5D triangular mesh, this tool calculates the resulting path when projected onto the mesh surface.
 
-!https://github.com/kristoffer-dyrkorn/pathfinder/blob/main/images/pathfinding.png
+![](https://github.com/kristoffer-dyrkorn/pathfinder/blob/main/images/pathfinding.png)
 
 # Use case
 
