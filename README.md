@@ -1,6 +1,6 @@
 # pathfinder
 
-Given a 2D polyline (blue) and a triangular mesh surface (black), calculate the resulting path (red) when projecting the polyline onto the surface.
+Given a 2D polyline (blue) and a 2.5D triangular mesh surface (black), calculate the resulting 3D path (red) when projecting the polyline onto the surface.
 
 <p align="center">
 <img src="https://github.com/kristoffer-dyrkorn/pathfinder/blob/main/images/pathfinding.png">
