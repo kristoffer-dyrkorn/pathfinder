@@ -54,7 +54,7 @@ export default class Pathfinder {
         const elevation = currentTriangle.getElevation(this.path.coordinates[p2]);
         this.path.coordinates[p2].push(elevation);
 
-        const edge = currentTriangle.e[edgeIndex];
+        const edge = currentTriangle.edges[edgeIndex];
 
         const p3 = p2 + 1;
         // if p3 exists, check whether we should continue on the same edge or the flip edge
@@ -62,8 +62,8 @@ export default class Pathfinder {
           const p1orientation = Math.sign(edge.orientation(this.path.coordinates[p1]));
           const p3orientation = Math.sign(edge.orientation(this.path.coordinates[p3]));
 
-          // if p3 is collinear to the current edge, we can continue on an arbitrary edge.
-          // just choose the same edge
+          // if p3 is collinear, we can continue along an arbitrary edge (same edge or flip edge).
+          // just choose the same edge.
           // NOTE: when p3 is collinear, there are two cases:
           // in the next iteration p2 (the current p3) will either lie on an edge of the current triangle,
           // or p1p2 will intersect one of the vertices of the current triangle
@@ -81,6 +81,8 @@ export default class Pathfinder {
           }
           p1 = p2;
           p2++;
+        } else {
+          // if p3 does not exist, we are at the end of the path, so do nothing and let the loop terminate
         }
         // jump to next iteration of loop
         continue;

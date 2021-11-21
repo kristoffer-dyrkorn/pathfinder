@@ -41,7 +41,7 @@ console.assert(triangle.isOnVertex([0, 10]) === 2, "Point is on triangle vertex"
 
 // edge/point intersections
 
-const edge = triangle.getEdges()[0];
+const edge = triangle.edges[0];
 
 console.assert(edge.intersectsPoint([3, 0]) === true, "Point is on edge");
 console.assert(edge.intersectsPoint([13, 0]) === false, "Point is on (horizontal) edge, but past endpoint");

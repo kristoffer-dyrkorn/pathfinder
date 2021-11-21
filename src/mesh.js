@@ -34,7 +34,7 @@ export default class Mesh {
 
       // store all edges of this triangle in the edge map
       // so we later can connect edges and flip edges
-      t.getEdges().forEach((edge) => {
+      t.edges.forEach((edge) => {
         this.edges.set(edge.key, edge);
       });
     });
