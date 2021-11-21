@@ -8,14 +8,14 @@ Given a 2D polyline (blue) and a 2.5D triangular mesh surface (black), calculate
 
 # Use case
 
-Assume you have a GPS track from a hiking trip, and a terrain model of the same area. You want to render the track and the terrain surface. However, since the terrain model has limited resolution, and the GPS is not always precise, the recorded track will not follow the terrain surface. Sometimes it will lie above the surface, sometimes it will disappear underneath it.
+Assume you have a GPS track from a hiking trip, and a terrain model of the same area. You want to render the track and the terrain surface. However, since the terrain model is a simplified version of the true surface, and the GPS is not always precise, the recorded track will not follow the surface of the terrain model. Sometimes the track will lie above the surface, sometimes it will disappear underneath it.
 
 # Method
 
 - Assume that both the track and the triangle mesh is 2D
 - Calculate all intersection points between the track and the triangles
 - Also add all track path points fully inside the mesh triangles
-- For each point in the resulting path, get elevation data by interpolation - either along triangle edges or inside triangles
+- For each point in the resulting path, get elevation data by interpolating the surrounding triangle
 
 The result is a 3D track that follows the terrain surface precisely. By adding a fixed elevation offset to the track it can then be rendered properly along with the terrain.
 
