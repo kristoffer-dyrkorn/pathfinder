@@ -35,7 +35,12 @@ export default class Edge {
   }
 
   // detects edge-edge intersections and edge-endpoint intersection ("a touching point").
-  // does not detect endpoint-endpoint intersections (two edges having a common point)
+  //
+  // NOTE tests only the interval <p1 p2] of the other edge.
+  // this is by design, to avoid duplicate detections as we traverse the path
+  // (the current p2 is p1 in the next iteration)
+  //
+  // NOTE does not detect endpoint-endpoint intersections (two edges having a common point)
   intersectsEdge(other) {
     // check location of the other edge's endpoints, relative to this one
     const d1 = this.orientation(other.e[0]);
@@ -48,10 +53,8 @@ export default class Edge {
     if (d1 * d2 < 0 && d3 * d4 < 0) {
       return this.calculateEdgeIntersection(other);
     } else {
-      // check for endpoint-line intersections
-      if (d1 === 0 && this.intersectsPoint(other.e[0])) {
-        return other.e[0];
-      }
+      // check for endpoint-line intersections, but don't test p1 (other.e[0])
+
       if (d2 === 0 && this.intersectsPoint(other.e[1])) {
         return other.e[1];
       }

@@ -15,15 +15,15 @@ export default class Pathfinder {
     let currentEdge = null;
     let currentTriangle = null;
 
-    // assume path start point is inside a triangle
+    // NOTE we assume the starting point of the path is inside a triangle
     currentTriangle = this.mesh.enclosingTriangle(this.path.coordinates[p1]);
+    // update p1 with elevation data
     const elevation = currentTriangle.getElevation(this.path.coordinates[p1]);
-    // update p1 with elevation
     this.path.coordinates[p1].push(elevation);
 
     do {
       if (currentEdge) {
-        // if we crossed an edge now, update the referance to the containing triangle
+        // if we have just crossed an edge, update the referance to the containing triangle
         // this way we avoid doing point location in every step
         currentTriangle = currentEdge.t;
       }
@@ -56,23 +56,28 @@ export default class Pathfinder {
 
         const edge = currentTriangle.e[edgeIndex];
 
-        // does p3 exist? if yes,
-        // test if p1 and p3 are on same sides of the half-plane defined by the intersecting edge.
-        // if yes, continue from the current edge
-        // if not, continue from flip edge
-
         const p3 = p2 + 1;
+        // if p3 exists, check whether we should continue on the same edge or the flip edge
         if (this.path.coordinates[p3]) {
           const p1orientation = Math.sign(edge.orientation(this.path.coordinates[p1]));
           const p3orientation = Math.sign(edge.orientation(this.path.coordinates[p3]));
 
-          console.assert(p1orientation !== 0, "p1 should not be collinear to an edge");
-          console.assert(p3orientation !== 0, "p3 should not be collinear to an edge");
-
-          if (p1orientation === p3orientation) {
+          // if p3 is collinear to the current edge, we can continue on an arbitrary edge.
+          // just choose the same edge
+          // NOTE: when p3 is collinear, there are two cases:
+          // in the next iteration p2 (the current p3) will either lie on an edge of the current triangle,
+          // or p1p2 will intersect one of the vertices of the current triangle
+          //
+          // both *should* be handled by the current code
+          if (p3orientation === 0) {
             currentEdge = edge;
           } else {
-            currentEdge = edge.flip;
+            // not collinear, decide where to continue
+            if (p1orientation === p3orientation) {
+              currentEdge = edge;
+            } else {
+              currentEdge = edge.flip;
+            }
           }
           p1 = p2;
           p2++;
@@ -94,50 +99,33 @@ export default class Pathfinder {
         p2++;
       } else {
         // p2 is outside the current triangle.
-        // p1p2 must now intersect one of the edges of the current triangle,
-        // if p1 was inside the current triangle or on one of the *other* edges.
+        // test the edge p1p2 against the edges of the current triangle.
+        // NOTE we consider p1 itself to *not* belong to the edge, ie we test the interval <p1 p2].
+        // else we will rediscover the intersection we came from,
+        // since the current p1 is the p2 from the previous iteration
 
         const p1p2 = new Edge(null, [0, 1], [this.path.coordinates[p1], this.path.coordinates[p2]]);
-
-        // NOTE do not test the current edge (the edge we came from) for intersection,
-        // or else we will discover that same intersection point again, jump backwards to the flip edge,
-        // and get stuck as we cannot find any intersections from that triangle
-
-        // NOTE this is not 100% correct.
-        // a path might have a vertex on an edge and then continue collinear to (on top of) that edge,
-        // either past the triangle (so the path crosses a triangle vertex)
-        // or just a short distance (so the next path point also intersects the same edge)
-        // ie a path segment can intersect a triangle edge twice.
-        // idea: consider path segments to be <p1,p2]? ie non-inclusive for the start point?
-
-        const [edge, intersectionPoint] = currentTriangle.intersectsOtherEdges(currentEdge, p1p2);
+        const [edge, intersectionPoint] = currentTriangle.intersectsEdge(p1p2);
         if (intersectionPoint) {
           const elevation = currentTriangle.getElevation(intersectionPoint);
           intersectionPoint.push(elevation);
 
-          // this intersection point is a new point on the path, so insert it
-          // in a new array cell located between p1 and p2
+          // this intersection point is a new point on the path, so
+          // insert a new array cell located between p1 and p2
           this.path.coordinates.splice(p2, 0, intersectionPoint);
+
+          // at this stage, we know that p1p2 *crosses* a triangle edge,
+          // since we (above) already tested whether p2 lies *on* a triangle edge
+          // so, continue along the flip edge
+          currentEdge = edge.flip;
 
           p1 = p2;
           p2++;
-
-          // continue along the flip edge of the intersecting edge
-          currentEdge = edge.flip;
-
-          // TODO for this case:
-          // if p1 was on a vertex or on an edge, one of the triangle edges might be collinear to p1p2
-          // if p1p2 is collinear, one of the triangle vertices will intersect p1p2
-          //
-          // so: if p1 was on a vertex or an edge, test intersection between all triangle vertices and p1p2
-          //
         } else {
           console.log("Error: did not find intersection point that should be there");
           break;
         }
       }
     } while (p2 < this.path.coordinates.length);
-
-    console.log(JSON.stringify(this.path.coordinates, null, " "));
   }
 }

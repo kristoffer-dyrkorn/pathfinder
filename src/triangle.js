@@ -46,7 +46,8 @@ export default class Triangle {
     return [false, 0];
   }
 
-  // test intersection against all edges in the triangle
+  // test intersection against all edges in this triangle
+  // NOTE: we only test the interval <p1 p2] of the edge e
   intersectsEdge(e) {
     for (const [i, edge] of this.e.entries()) {
       const intersectionPoint = edge.intersectsEdge(e);
@@ -54,26 +55,6 @@ export default class Triangle {
         return [edge, intersectionPoint];
       }
     }
-    return [null, null];
-  }
-
-  // given a start edge, test intersection only against the other two edges
-  intersectsOtherEdges(startEdge, e) {
-    // if no start edge was given, test all three edges
-    if (startEdge == null) return this.intersectsEdge(e);
-
-    let candidateEdge = startEdge.next;
-    let intersectionPoint = candidateEdge.intersectsEdge(e);
-    if (intersectionPoint) {
-      return [candidateEdge, intersectionPoint];
-    }
-
-    candidateEdge = candidateEdge.next;
-    intersectionPoint = candidateEdge.intersectsEdge(e);
-    if (intersectionPoint) {
-      return [candidateEdge, intersectionPoint];
-    }
-
     return [null, null];
   }
 
