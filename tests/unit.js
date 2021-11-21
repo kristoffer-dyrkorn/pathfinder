@@ -1,4 +1,3 @@
-import Pathfinder from "../src/pathfinder.js";
 import Triangle from "../src/triangle.js";
 import Edge from "../src/edge.js";
 import Mesh from "../src/mesh.js";
@@ -156,12 +155,3 @@ console.assert(hasFlipEdge.flip.flip.key === "1-4", "Internal edge 1-4 's flip f
 
 const enclosingTriangle = simpleMesh.enclosingTriangle([0.25, 0.25]);
 console.assert(enclosingTriangle != null, "Enclosing triangle exists for [0.25, 0.25]");
-
-// pathfinding
-
-let p = new Pathfinder("simple.obj", "simple.json");
-p.trace();
-
-p = new Pathfinder("simple.obj", "simple2.json");
-p.trace();
-// console.log(JSON.stringify(p.path.coordinates, null, " "));
