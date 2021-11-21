@@ -6,7 +6,6 @@ export default class Edge {
     this.key = `${vertices[0]}-${vertices[1]}`;
     this.flipKey = `${vertices[1]}-${vertices[0]}`;
     this.flip = null;
-    this.next = null; // next edge ccw around the triangle
 
     this.t = triangle;
   }
@@ -36,8 +35,8 @@ export default class Edge {
 
   // detects edge-edge intersections and edge-endpoint intersection ("a touching point").
   //
-  // NOTE tests only the interval <p1 p2] of the other edge.
-  // this is by design, to avoid duplicate detections as we traverse the path
+  // NOTE only the interval <p1 p2] of the other edge is tested.
+  // this is by design, so we avoid duplicate detections as we traverse the path
   // (the current p2 is p1 in the next iteration)
   //
   // NOTE does not detect endpoint-endpoint intersections (two edges having a common point)
@@ -70,8 +69,9 @@ export default class Edge {
     }
   }
 
-  // returns location where this edge intersects another edge
+  // returns the location where this edge crosses the other edge
   // based on https://www.tutorialspoint.com/Check-if-two-line-segments-intersect
+  // TODO: replace with robust/exact algorithm
   calculateEdgeIntersection(other) {
     const d1 = (this.e[0][0] - this.e[1][0]) * (other.e[0][1] - other.e[1][1]);
     const d2 = (this.e[0][1] - this.e[1][1]) * (other.e[0][0] - other.e[1][0]);
@@ -88,7 +88,7 @@ export default class Edge {
     return [(u1 * u2x - u3x * u4) / d, (u1 * u2y - u3y * u4) / d];
   }
 
-  // returns 0 if p intersects the edge,
+  // returns 0 if p lies on the edge,
   // < 0 if a->b->p are oriented counterclockwise,
   // > 0 if a->b->p are oriented clockwise
   orientation(p) {

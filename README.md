@@ -29,12 +29,17 @@ The result is a 3D track that follows the terrain surface precisely. By adding a
 
 See the bottom of `tests.js` for examples on how to use.
 
+# Credits
+
+- Depends on Vladimir Agafonkin's [port of robust geometric predicates](https://github.com/mourner/robust-predicates) (License: Public domain)
+- Contains code taken from Mikola Lysenko's parse-obj, see https://github.com/mikolalysenko/parse-obj (License: MIT)
+
 # Caveats
 
-- This is an early relese and contains work in progress and unpolished code. The program will likely blow up on large data sets.
+- This is an early release and contains work in progress and unpolished code. The program will likely blow up on large data sets.
 - The code does not yet handle all intersection cases.
 - The code does not yet handle coordinate reference systems (WGS, UTM and so on) for input points.
-- Numerical precision is an issue in geometric calculations. The code here uses Vladimir Agafonkin's [port of robust geometric predicates](https://github.com/mourner/robust-predicates) for point-edge orientations, but line-line intersection calculations and duplicate point detection is for now done in a simple, non-robust way.
+- Numerical precision is an issue in geometric calculations. The code here uses robust tests of point-edge orientations, but line-line intersections and duplicate point detection is for now done in a simple, non-robust way.
 
 # License
 

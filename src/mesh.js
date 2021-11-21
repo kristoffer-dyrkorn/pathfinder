@@ -2,14 +2,10 @@ import fs from "fs";
 import Triangle from "./triangle.js";
 
 export default class Mesh {
-  // construct mesh from obj file
-
-  // point location: find tri containing point p
-  // navigation -> find tri on opposite side of edge e
-  // find all tris around vertex v
-
   constructor(fileName) {
+    // list of Triangle objects, ie all triangles in the mesh
     this.triangles = [];
+    // list of all vertices (points)
     this.vertices = [];
     // list of all edges, used when navigating from an edge to its flip edge
     this.edges = new Map();
@@ -65,26 +61,28 @@ export default class Mesh {
     return null;
   }
 
+  // based on Mikola Lysenko's parse-obj,
+  // see https://github.com/mikolalysenko/parse-obj
   parseOBJ(fileName) {
-    const triangles = [];
+    const triangleIndices = [];
     const vertices = [];
     const file = fs.readFileSync(fileName, "utf-8");
     file.split(/\r?\n/).forEach((line) => {
-      const tokens = line.split(" ");
+      const lineTokens = line.split(" ");
 
-      switch (tokens[0]) {
+      switch (lineTokens[0]) {
         case "v":
-          // "+" means cast string to number
-          vertices.push([+tokens[1], +tokens[2], +tokens[3]]);
+          // "+" casts a string to a number
+          vertices.push([+lineTokens[1], +lineTokens[2], +lineTokens[3]]);
           break;
 
         case "f":
-          const position = new Array(tokens.length - 1);
-          for (let i = 1; i < tokens.length; ++i) {
-            const indices = tokens[i].split("/");
-            position[i - 1] = (indices[0] | 0) - 1;
+          const triangleFace = new Array(lineTokens.length - 1);
+          for (let i = 1; i < lineTokens.length; ++i) {
+            const indices = lineTokens[i].split("/");
+            triangleFace[i - 1] = (indices[0] | 0) - 1;
           }
-          triangles.push(position);
+          triangleIndices.push(triangleFace);
           break;
 
         case "vp":
@@ -96,6 +94,6 @@ export default class Mesh {
           break;
       }
     });
-    return [triangles, vertices];
+    return [triangleIndices, vertices];
   }
 }

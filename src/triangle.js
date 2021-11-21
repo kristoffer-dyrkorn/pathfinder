@@ -12,7 +12,7 @@ export default class Triangle {
   }
 
   // tests if point is strictly inside the triangle
-  // ie will return false when the point intersects an edge or a vertex
+  // ie will return false when the point lies on an edge or a vertex
   isInside(p) {
     let insideEdge = 0;
     this.edges.forEach((edge) => {
@@ -46,6 +46,7 @@ export default class Triangle {
     return [null, null];
   }
 
+  // TODO: use a more robust/exact criterion
   isOnVertex(p) {
     for (const [i, vertex] of this.p.entries()) {
       if (Math.abs(vertex[0] - p[0]) < 0.0001 && Math.abs(vertex[1] - p[1]) < 0.0001) {
