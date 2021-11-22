@@ -10,6 +10,8 @@ Given a 2D polyline (blue) and a 2.5D triangular mesh surface (black), calculate
 
 Assume you have a GPS track from a hiking trip, and a terrain model of the same area. You want to render the track and the terrain surface. However, since the terrain model is a simplified version of the true surface, and the GPS is not always precise, the recorded track will not follow the surface of the terrain model. Sometimes the track will lie above the surface, sometimes it will disappear underneath it.
 
+This tool reads in a path and a terrain model, and calculates a new path that follows the original 2D path - but also lies on the surface of the terrain model.
+
 # Method
 
 - Assume that both the track and the triangle mesh is 2D
