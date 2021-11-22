@@ -12,19 +12,18 @@ export default class Pathfinder {
   trace() {
     // NOTE we assume the starting point of the path is inside a triangle
     let currentTriangle = this.mesh.enclosingTriangle(this.path.coordinates[0]);
-    const elevation = currentTriangle.getElevation(this.path.coordinates[0]);
-    this.path.coordinates[0].push(elevation);
+    currentTriangle.updateElevation(this.path.coordinates[0]);
 
-    let p2 = 1;
+    // index of the end point of the current path segment
+    let i = 1;
 
     do {
       // check if the segment end point is on one of the vertices of the current triangle
-      const vertexIndex = currentTriangle.isOnVertex(this.path.coordinates[p2]);
+      const vertexIndex = currentTriangle.isOnVertex(this.path.coordinates[i]);
       if (vertexIndex) {
-        const elevation = currentTriangle.getElevation(this.path.coordinates[p2]);
-        this.path.coordinates[p2].push(elevation);
+        currentTriangle.updateElevation(this.path.coordinates[i]);
 
-        const spokeCenter = currentTriangle.v[vertexIndex];
+        const spokeCenter = currentTriangle.vertices[vertexIndex];
         const candidateTris = this.mesh.spoke[spokeCenter];
 
         // now we must test all triangles in the spoke around this vertex
@@ -34,36 +33,32 @@ export default class Pathfinder {
       }
 
       // check if the segment end point is on one of the edges of the current triangle
-      const [onEdge, edgeIndex] = currentTriangle.isOnEdge(this.path.coordinates[p2]);
+      const [onEdge, edgeIndex] = currentTriangle.isOnEdge(this.path.coordinates[i]);
       if (onEdge) {
-        // update p2 with elevation
-        const elevation = currentTriangle.getElevation(this.path.coordinates[p2]);
-        this.path.coordinates[p2].push(elevation);
-
-        const edge = currentTriangle.edges[edgeIndex];
+        // update point with elevation
+        currentTriangle.updateElevation(this.path.coordinates[i]);
 
         // if a next point exists, check whether we should continue on the same edge or on the flip edge
-        if (this.path.coordinates[p2 + 1]) {
-          const prevOrientation = Math.sign(edge.orientation(this.path.coordinates[p2 - 1]));
-          const nextOrientation = Math.sign(edge.orientation(this.path.coordinates[p2 + 1]));
+        if (this.path.coordinates[i + 1]) {
+          const edge = currentTriangle.edges[edgeIndex];
 
-          // if the point after the segment endpoint is collinear to the segment,
-          // we can continue along an arbitrary edge (same edge or flip edge). just choose the same edge.
+          const prevOrientation = Math.sign(edge.orientation(this.path.coordinates[i - 1]));
+          const nextOrientation = Math.sign(edge.orientation(this.path.coordinates[i + 1]));
+
+          // if the point after the segment endpoint is collinear to the segment (nextOrientation === 0),
+          // we can continue along an arbitrary edge (either same edge or flip edge).
+          // here we just choose the same edge - ie we don't need to update currentTriangle.
+          // also, keeping the same currentTriangle is correct if the orientation signs are equal.
           //
-          // NOTE: when it is collinear, there are two cases:
+          // that is, we only need to jump to the flip edge if the orientations are non-equal
+          if (prevOrientation !== nextOrientation) {
+            currentTriangle = edge.flip.triangle;
+          }
+
+          // NOTE: when the edge is collinear, there are two cases:
           // in the next iteration the end point will either lie on an edge of the current triangle,
           // or the edge will intersect one of the vertices of the current triangle
           // both cases *should* be handled by the current code
-          if (nextOrientation === 0) {
-            currentTriangle = edge.triangle;
-          } else {
-            // not collinear, decide where to continue
-            if (prevOrientation === nextOrientation) {
-              currentTriangle = edge.triangle;
-            } else {
-              currentTriangle = edge.flip.triangle;
-            }
-          }
         } else {
           // if there is no next point, we are at the end of the path, so do nothing and let the loop terminate
         }
@@ -73,11 +68,9 @@ export default class Pathfinder {
       }
 
       // check if the segment end point is inside the current triangle
-      const candidateTriangle = this.mesh.enclosingTriangle(this.path.coordinates[p2]);
+      const candidateTriangle = this.mesh.enclosingTriangle(this.path.coordinates[i]);
       if (candidateTriangle === currentTriangle) {
-        // update end point with elevation and go on
-        const elevation = currentTriangle.getElevation(this.path.coordinates[p2]);
-        this.path.coordinates[p2].push(elevation);
+        currentTriangle.updateElevation(this.path.coordinates[i]);
       } else {
         // the segment end point is outside the current triangle.
         // test the segment against the edges of the current triangle.
@@ -85,15 +78,14 @@ export default class Pathfinder {
         // else we will rediscover the intersection we came from,
         // since the current segment start point is the end point from the previous iteration
 
-        const segment = new Edge(null, [0, 1], [this.path.coordinates[p2 - 1], this.path.coordinates[p2]]);
-        const [edge, intersectionPoint] = currentTriangle.intersectsEdge(segment);
+        const pathSegment = new Edge(null, [0, 1], [this.path.coordinates[i - 1], this.path.coordinates[i]]);
+        const [edge, intersectionPoint] = currentTriangle.intersectsEdge(pathSegment);
         if (intersectionPoint) {
-          const elevation = currentTriangle.getElevation(intersectionPoint);
-          intersectionPoint.push(elevation);
+          currentTriangle.updateElevation(intersectionPoint);
 
           // this intersection point is a new point on the path, so
           // insert a new array cell located between start and end points
-          this.path.coordinates.splice(p2, 0, intersectionPoint);
+          this.path.coordinates.splice(i, 0, intersectionPoint);
 
           // at this stage, we know that the path segment *crosses* a triangle edge,
           // since we (above) already tested whether the end point lies *on* a triangle edge.
@@ -104,6 +96,6 @@ export default class Pathfinder {
           break;
         }
       }
-    } while (++p2 < this.path.coordinates.length);
+    } while (++i < this.path.coordinates.length);
   }
 }

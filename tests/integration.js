@@ -15,4 +15,4 @@ p.trace();
 
 p = new Pathfinder("simple.obj", "simple2.json");
 p.trace();
-// console.log(JSON.stringify(p.path.coordinates, null, " "));
+console.log(JSON.stringify(p.path.coordinates, null, " "));

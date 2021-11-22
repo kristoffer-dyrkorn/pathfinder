@@ -3,7 +3,7 @@ import Edge from "./edge.js";
 export default class Triangle {
   constructor(vertices, points) {
     this.p = [points[vertices[0]], points[vertices[1]], points[vertices[2]]];
-    this.v = vertices;
+    this.vertices = vertices;
 
     this.edges = [];
     this.edges.push(new Edge(this, [vertices[0], vertices[1]], points));
@@ -54,6 +54,10 @@ export default class Triangle {
       }
     }
     return false;
+  }
+
+  updateElevation(point) {
+    point.push(this.getElevation(point));
   }
 
   // calculate the elevation of a point in a triangle.
